@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.niek125.datasetservice.handlers.FileHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +15,11 @@ import static com.niek125.datasetservice.utils.PemUtils.readPublicKeyFromFile;
 
 @Configuration
 public class Config {
+    @Bean
+    public FileHandler fileHandler(){
+        return new FileHandler();
+    }
+
     @Bean
     public ObjectMapper objectMapper() {
         return new ObjectMapper();

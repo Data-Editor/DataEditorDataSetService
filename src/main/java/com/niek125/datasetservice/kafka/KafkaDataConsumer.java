@@ -25,7 +25,7 @@ public class KafkaDataConsumer {
         this.fileHandler = fileHandler;
     }
 
-    @KafkaListener(topics = "message", groupId = "message-consumer")
+    @KafkaListener(topics = "data", groupId = "data-consumer")
     public void consume(String message) {
         logger.info("received message: " + message);
         logger.info("parsing data");
