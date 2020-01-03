@@ -1,5 +1,6 @@
 package com.niek125.datasetservice.models;
 
+import com.jayway.jsonpath.DocumentContext;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -7,5 +8,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class KafkaMessage {
     private final KafkaHeader kafkaHeader;
-    private final String payload;
+    private final DocumentContext payload;
 }

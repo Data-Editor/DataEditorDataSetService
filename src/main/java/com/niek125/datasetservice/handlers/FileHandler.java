@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 public class FileHandler {
     @Value("${com.niek125.filedump}")
@@ -23,13 +24,13 @@ public class FileHandler {
         fileWriter.close();
     }
 
-    public void createRow(String projectid, String item) throws IOException {
+    public void createRow(String projectid, HashMap item) throws IOException {
         final DocumentContext json = getJSON(projectid);
         json.add("$.items", item);
         overwriteFile(json, projectid);
     }
 
-    public void editRow(String projectid, String item, int row) throws IOException {
+    public void editRow(String projectid, HashMap item, int row) throws IOException {
         final DocumentContext json = getJSON(projectid);
         json.set("$.items[" + row + "]",item);
         overwriteFile(json, projectid);
