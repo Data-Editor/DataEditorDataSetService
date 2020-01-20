@@ -2,6 +2,7 @@ package com.niek125.datasetservice.controllers;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.niek125.datasetservice.models.Permission;
 import org.slf4j.Logger;
@@ -15,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/data")
 public class DataSetController {
@@ -30,16 +32,20 @@ public class DataSetController {
         this.objectMapper = objectMapper;
     }
 
-    @RequestMapping(value = "/get/{projectid}", method = RequestMethod.GET)
-    public String getData(@RequestHeader("Authorization") String token, @PathVariable("projectid") String projectid) throws IOException {
+    private boolean hasPermission(String token, String projectid) throws JsonProcessingException {
         logger.info("verifying token");
         final DecodedJWT jwt = jwtVerifier.verify(token.replace("Bearer ", ""));
         final Permission[] perms = objectMapper.readValue(((jwt.getClaims()).get("pms")).asString(), Permission[].class);
-        if (!Arrays.stream(perms).filter(p -> p.getProjectid().equals(projectid)).findFirst().isPresent()) {
+        return Arrays.stream(perms).anyMatch(p -> p.getProjectid().equals(projectid));
+    }
+
+    @GetMapping("/get/{projectid}")
+    public String getData(@RequestHeader("Authorization") String token, @PathVariable("projectid") String projectid) throws IOException {
+        if(!hasPermission(token, projectid)){
             logger.info("no permission");
             return "[]";
         }
-        logger.info("reading file: " + projectid);
+        logger.info("reading file: {}", projectid);
         final String content = new String(Files.readAllBytes(Paths.get(filedir + projectid + ".json")));
         logger.info("returning content");
         return content;
